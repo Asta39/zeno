@@ -21,6 +21,10 @@ import { BlurToggleSwitch } from "@/components/BlurToggleSwitch";
 import { BlurScope } from "@/components/BlurScope";
 import { BackButton } from "@/components/BackButton";
 
+// Fail a stuck request after 60s instead of Vercel's 300s default, so one
+// slow database moment can't pin users on a spinner for five minutes.
+export const maxDuration = 60;
+
 const roleLabels: Record<string, string> = {
   admin: "Admin",
   accountant: "Accountant",

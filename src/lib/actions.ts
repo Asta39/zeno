@@ -104,65 +104,40 @@ const DOC_MODULE: Record<string, "quotes" | "invoices" | "credit_notes" | "bills
 };
 
 export type NumberKind = "invoice" | "quote" | "credit_note" | "purchase_order" | "payment";
+const NUMBER_COLUMN: Record<NumberKind, string> = {
+  invoice: "next_invoice_no",
+  quote: "next_quote_no",
+  credit_note: "next_credit_note_no",
+  purchase_order: "next_po_no",
+  payment: "next_payment_no",
+};
+
+/** Atomically claim the next number: one UPDATE ... RETURNING on only the
+ *  counter being used. The old read-then-write-all-five version held the org
+ *  row longer, and two concurrent saves could hand out the same number or
+ *  roll back each other's counters. */
+async function claimNumber(kind: NumberKind, runner: { execute: typeof db.execute }, orgId: number): Promise<string> {
+  const col = sql.raw(NUMBER_COLUMN[kind]);
+  const res: any = await runner.execute(
+    sql`update org set ${col} = ${col} + 1 where id = ${orgId} returning ${col} - 1 as n, invoice_prefix`
+  );
+  const row = (Array.isArray(res) ? res[0] : res?.rows?.[0]) as { n: number; invoice_prefix: string } | undefined;
+  if (!row) throw new Error("Organization not found");
+  const prefix = kind === "invoice" ? row.invoice_prefix
+    : kind === "quote" ? "QT-"
+    : kind === "credit_note" ? "CN-"
+    : kind === "purchase_order" ? "PO-"
+    : "PMT-";
+  return `${prefix}${String(Number(row.n)).padStart(4, "0")}`;
+}
+
 export async function nextNumber(kind: NumberKind): Promise<string> {
   const o = await getOrg();
-  const prefixes: Record<NumberKind, string> = {
-    invoice: o.invoicePrefix,
-    quote: "QT-",
-    credit_note: "CN-",
-    purchase_order: "PO-",
-    payment: "PMT-",
-  };
-  const current: Record<NumberKind, number> = {
-    invoice: o.nextInvoiceNo,
-    quote: o.nextQuoteNo,
-    credit_note: o.nextCreditNoteNo,
-    purchase_order: o.nextPoNo,
-    payment: o.nextPaymentNo,
-  };
-  const n = current[kind];
-  await db
-    .update(org)
-    .set({
-      nextInvoiceNo: kind === "invoice" ? n + 1 : o.nextInvoiceNo,
-      nextQuoteNo: kind === "quote" ? n + 1 : o.nextQuoteNo,
-      nextCreditNoteNo: kind === "credit_note" ? n + 1 : o.nextCreditNoteNo,
-      nextPoNo: kind === "purchase_order" ? n + 1 : o.nextPoNo,
-      nextPaymentNo: kind === "payment" ? n + 1 : o.nextPaymentNo,
-    })
-    .where(eq(org.id, o.id));
-  return `${prefixes[kind]}${String(n).padStart(4, "0")}`;
+  return claimNumber(kind, db, o.id);
 }
 
 async function nextNumberInTx(kind: NumberKind, tx: any): Promise<string> {
-  const [o] = await tx.select().from(org).where(eq(org.id, currentOrgId())).limit(1);
-  if (!o) throw new Error("Organization not found");
-  const prefixes: Record<NumberKind, string> = {
-    invoice: o.invoicePrefix,
-    quote: "QT-",
-    credit_note: "CN-",
-    purchase_order: "PO-",
-    payment: "PMT-",
-  };
-  const current: Record<NumberKind, number> = {
-    invoice: o.nextInvoiceNo,
-    quote: o.nextQuoteNo,
-    credit_note: o.nextCreditNoteNo,
-    purchase_order: o.nextPoNo,
-    payment: o.nextPaymentNo,
-  };
-  const n = current[kind];
-  await tx
-    .update(org)
-    .set({
-      nextInvoiceNo: kind === "invoice" ? n + 1 : o.nextInvoiceNo,
-      nextQuoteNo: kind === "quote" ? n + 1 : o.nextQuoteNo,
-      nextCreditNoteNo: kind === "credit_note" ? n + 1 : o.nextCreditNoteNo,
-      nextPoNo: kind === "purchase_order" ? n + 1 : o.nextPoNo,
-      nextPaymentNo: kind === "payment" ? n + 1 : o.nextPaymentNo,
-    })
-    .where(eq(org.id, o.id));
-  return `${prefixes[kind]}${String(n).padStart(4, "0")}`;
+  return claimNumber(kind, tx, currentOrgId());
 }
 
 /* ---------------- Contacts & CRM ---------------- */
