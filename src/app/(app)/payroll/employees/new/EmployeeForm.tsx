@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -29,7 +30,7 @@ export function EmployeeForm() {
         if (e && typeof e === "object" && "digest" in e && typeof (e as any).digest === "string" && (e as any).digest.startsWith("NEXT_REDIRECT")) {
           throw e;
         }
-        setError(e instanceof Error ? e.message : "Could not save employee");
+        setError(errMsg(e, "Could not save employee"));
       }
     });
   }

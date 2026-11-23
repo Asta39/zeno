@@ -20,6 +20,7 @@ import { BlurProvider } from "@/components/BlurContext";
 import { BlurToggleSwitch } from "@/components/BlurToggleSwitch";
 import { BlurScope } from "@/components/BlurScope";
 import { BackButton } from "@/components/BackButton";
+import { StaleBuildBanner } from "@/components/StaleBuildBanner";
 
 // Fail a stuck request after 60s instead of Vercel's 300s default, so one
 // slow database moment can't pin users on a spinner for five minutes.
@@ -182,6 +183,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </main>
         </BlurProvider>
       </PersistentSidebarProvider>
+      <StaleBuildBanner />
       <AiAssistantPill initialBriefCount={brief?.count ?? 0} brandColor={access.orgRow.brandColor} />
     </>
   );

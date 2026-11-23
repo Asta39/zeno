@@ -9,3 +9,13 @@ export function isStaleServerActionError(e: unknown): boolean {
 }
 
 export const STALE_ACTION_MESSAGE = "This page is out of date (a new version was published). Refresh the page and try again.";
+
+/** Browser event fired once a tab learns it is running an old build, so a
+ *  banner can offer a refresh before the user loses work to a failed save. */
+export const STALE_BUILD_EVENT = "zeno:stale-build";
+
+export function reportIfStale(e: unknown): boolean {
+  const stale = isStaleServerActionError(e);
+  if (stale && typeof window !== "undefined") window.dispatchEvent(new Event(STALE_BUILD_EVENT));
+  return stale;
+}

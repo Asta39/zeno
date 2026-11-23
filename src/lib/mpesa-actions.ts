@@ -1,4 +1,5 @@
 "use server";
+import { errMsg } from "@/lib/err-msg";
 
 import { db, bankTransactions } from "@/db";
 import { and, eq, inArray } from "drizzle-orm";
@@ -44,7 +45,7 @@ export async function parseMpesaStatement(
     });
   } catch (e) {
     if (e instanceof MpesaPasswordError) return { ok: false, error: e.message };
-    return { ok: false, error: e instanceof Error ? e.message : "Could not read the PDF." };
+    return { ok: false, error: errMsg(e, "Could not read the PDF.") };
   }
 }
 

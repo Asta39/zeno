@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -26,7 +27,7 @@ export function RecoverRunButton({ runId }: { runId: number }) {
           alert("Nothing had reached the ledger — the run is back to draft and can be posted again.");
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Recovery failed");
+        setError(errMsg(e, "Recovery failed"));
       }
     });
   }

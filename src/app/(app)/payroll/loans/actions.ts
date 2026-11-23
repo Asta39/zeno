@@ -1,4 +1,5 @@
 "use server";
+import { errMsg } from "@/lib/err-msg";
 
 import { getAccess } from "@/lib/access";
 import { orgContext } from "@/lib/org";
@@ -80,7 +81,7 @@ export async function recordLoanRepaymentAction(
       })
     );
   } catch (e) {
-    return { error: e instanceof Error ? e.message : "Could not record the repayment" };
+    return { error: errMsg(e, "Could not record the repayment") };
   }
 
   revalidatePath(`/payroll/loans/${loanId}`);
@@ -115,7 +116,7 @@ export async function recordLoanDisbursementAction(
       recordMissingLoanDisbursement({ orgId: access.orgId, loanId, disbursedFrom, date })
     );
   } catch (e) {
-    return { error: e instanceof Error ? e.message : "Could not record the disbursement" };
+    return { error: errMsg(e, "Could not record the disbursement") };
   }
 
   revalidatePath(`/payroll/loans/${loanId}`);

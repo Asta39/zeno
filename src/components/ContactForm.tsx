@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -118,7 +119,7 @@ export function ContactForm({
         router.push(initial?.id ? `/contacts/${initial.id}` : "/contacts");
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not save contact");
+        setError(errMsg(e, "Could not save contact"));
       }
     });
   }

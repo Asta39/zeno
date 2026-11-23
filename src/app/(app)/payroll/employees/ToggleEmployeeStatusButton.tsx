@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -22,7 +23,7 @@ export function ToggleEmployeeStatusButton({ employeeId, isActive }: { employeeI
                 if (res.error) setError(res.error);
                 else router.refresh();
               } catch (e) {
-                setError(e instanceof Error ? e.message : "Failed to update status");
+                setError(errMsg(e, "Failed to update status"));
               }
             });
           }

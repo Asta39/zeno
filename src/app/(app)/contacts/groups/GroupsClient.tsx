@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -47,7 +48,7 @@ export function GroupsClient({ groups, canManage }: { groups: Group[]; canManage
         await fn();
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Something went wrong");
+        setError(errMsg(e, "Something went wrong"));
       }
     });
   }

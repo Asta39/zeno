@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -36,7 +37,7 @@ export function WelcomeTrialClient({ orgName, trialDays, perStaffFeeKes }: { org
         router.push("/home");
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+        setError(errMsg(err, "Something went wrong. Please try again."));
       }
     });
   }

@@ -1,3 +1,4 @@
+import { errMsg } from "@/lib/err-msg";
 import { NextRequest, NextResponse } from "next/server";
 import { db, aiMessages } from "@/db";
 import { and, eq, isNull } from "drizzle-orm";
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
   try {
     turn = await runAssistantTurn(history, message, access);
   } catch (e) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : "Assistant failed" }, { status: 500 });
+    return NextResponse.json({ error: errMsg(e, "Assistant failed") }, { status: 500 });
   }
 
   await db.insert(aiMessages).values({

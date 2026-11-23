@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -176,7 +177,7 @@ export function BankImport({ banks }: { banks: { id: number; label: string }[] }
                     setRows(null);
                     router.refresh();
                   } catch (e) {
-                    setError(e instanceof Error ? e.message : "Import failed");
+                    setError(errMsg(e, "Import failed"));
                   }
                 })
               }

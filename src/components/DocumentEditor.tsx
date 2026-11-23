@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -413,7 +414,7 @@ export function DocumentEditor({
         router.push(detailHref ? `${detailHref}/${id}` : backHref);
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Something went wrong");
+        setError(errMsg(e, "Something went wrong"));
       }
     });
   }

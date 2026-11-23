@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -42,7 +43,7 @@ export function OrgBackupRow({
         await runOrgBackupNow(orgId);
         router.refresh();
       } catch (e) {
-        setLocalError(e instanceof Error ? e.message : "Backup failed");
+        setLocalError(errMsg(e, "Backup failed"));
       }
     });
   }
@@ -53,7 +54,7 @@ export function OrgBackupRow({
       const url = await downloadOrgBackupAction(path);
       window.open(url, "_blank");
     } catch (e) {
-      setLocalError(e instanceof Error ? e.message : "Could not create download link");
+      setLocalError(errMsg(e, "Could not create download link"));
     } finally {
       setDownloading(null);
     }

@@ -1,3 +1,4 @@
+import { errMsg } from "@/lib/err-msg";
 import Groq from "groq-sdk";
 import { ALL_TOOLS, TOOL_MODULES, findWriteTool, type ToolDef } from "./tools";
 import type { Access } from "@/lib/access";
@@ -148,7 +149,7 @@ export async function runAssistantTurn(
     try {
       result = await tool.run(args, access);
     } catch (e) {
-      result = { error: e instanceof Error ? e.message : "Tool call failed" };
+      result = { error: errMsg(e, "Tool call failed") };
     }
     toolCalls.push({ tool: call.function.name, args, result });
 

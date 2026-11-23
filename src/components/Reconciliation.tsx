@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -59,7 +60,7 @@ export function Reconciliation({
         await refresh(id);
         setExpanded(true);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not start");
+        setError(errMsg(e, "Could not start"));
       }
     });
   }
@@ -97,7 +98,7 @@ export function Reconciliation({
         setDone(true);
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not complete");
+        setError(errMsg(e, "Could not complete"));
       }
     });
   }
@@ -112,7 +113,7 @@ export function Reconciliation({
         setAdjustMemo("");
         await refresh(state.rec.id);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not record adjustment");
+        setError(errMsg(e, "Could not record adjustment"));
       }
     });
   }

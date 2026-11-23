@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -57,7 +58,7 @@ export function AccountTransfer({ banks }: { banks: { id: number; label: string 
         router.refresh();
         setTimeout(() => setSuccess(false), 3000);
       } catch (e) {
-        setError(isStaleServerActionError(e) ? STALE_ACTION_MESSAGE : e instanceof Error ? e.message : "Transfer failed");
+        setError(isStaleServerActionError(e) ? STALE_ACTION_MESSAGE : errMsg(e, "Transfer failed"));
       }
     });
   }

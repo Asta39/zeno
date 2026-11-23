@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -160,7 +161,7 @@ export function RecurringManager({
         resetForm();
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not save");
+        setError(errMsg(e, "Could not save"));
       }
     });
   }

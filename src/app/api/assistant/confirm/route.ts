@@ -1,3 +1,4 @@
+import { errMsg } from "@/lib/err-msg";
 import { NextRequest, NextResponse } from "next/server";
 import { db, aiMessages } from "@/db";
 import { getAccess } from "@/lib/access";
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
   try {
     result = await executeConfirmedAction(tool, args, access);
   } catch (e) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : "Action failed" }, { status: 400 });
+    return NextResponse.json({ error: errMsg(e, "Action failed") }, { status: 400 });
   }
 
   // The underlying actions.ts function already wrote its own audit entry

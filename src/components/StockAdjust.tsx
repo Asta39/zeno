@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -36,7 +37,7 @@ export function StockAdjust({ itemId, unit }: { itemId: number; unit: string }) 
         setCost("");
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Adjustment failed");
+        setError(errMsg(e, "Adjustment failed"));
       }
     });
   }

@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -29,7 +30,7 @@ export function PeriodLockForm({
         await setBooksLock(lockDate || null);
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to update books lock.");
+        setError(errMsg(e, "Failed to update books lock."));
       }
     });
   }
@@ -50,7 +51,7 @@ export function PeriodLockForm({
         setReason("");
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to reopen the period.");
+        setError(errMsg(e, "Failed to reopen the period."));
       }
     });
   }
@@ -62,7 +63,7 @@ export function PeriodLockForm({
         await setAutoLockOnReconciliation(enabled);
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to update auto-lock setting.");
+        setError(errMsg(e, "Failed to update auto-lock setting."));
       }
     });
   }

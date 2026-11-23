@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -40,7 +41,7 @@ export function AddStaffForm({ roles, employees, isLocked }: { roles: string[], 
             setName(""); setEmail(""); setPassword("");
             router.refresh();
           } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to create account");
+            setError(errMsg(err, "Failed to create account"));
           }
         });
       }}
@@ -267,7 +268,7 @@ export function CreateRoleForm() {
             setName("");
             router.refresh();
           } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to create role");
+            setError(errMsg(err, "Failed to create role"));
           }
         });
       }}

@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -29,7 +30,7 @@ export function ReconcileButton() {
               setResult(`${res.checked} checked · ${res.confirmed} confirmed · ${res.reversed} reversed · ${res.stillPending} still processing`);
               router.refresh();
             } catch (e) {
-              setError(e instanceof Error ? e.message : "Could not check payout status");
+              setError(errMsg(e, "Could not check payout status"));
             }
           })
         }

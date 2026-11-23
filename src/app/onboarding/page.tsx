@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -85,7 +86,7 @@ export default function OnboardingPage() {
         router.push("/welcome-trial");
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+        setError(errMsg(err, "Something went wrong. Please try again."));
       }
     });
   }

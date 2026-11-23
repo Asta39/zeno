@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -51,7 +52,7 @@ export function NewJournalForm({ accounts }: { accounts: { id: number; code: str
         });
         router.push("/accountant/journals");
       } catch (e) {
-        setError(isStaleServerActionError(e) ? STALE_ACTION_MESSAGE : e instanceof Error ? e.message : "Failed to post journal");
+        setError(isStaleServerActionError(e) ? STALE_ACTION_MESSAGE : errMsg(e, "Failed to post journal"));
       }
     });
   }

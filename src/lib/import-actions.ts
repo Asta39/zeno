@@ -1,4 +1,5 @@
 "use server";
+import { errMsg } from "@/lib/err-msg";
 
 import { db, contacts, items, customerGroups, contactGroupMemberships, itemGroups, itemTypes } from "@/db";
 import { and, eq, inArray } from "drizzle-orm";
@@ -113,7 +114,7 @@ export async function importContacts(rows: ContactRow[]): Promise<{ created?: nu
     return { created, skipped };
   });
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to import contacts" };
+    return { error: errMsg(err, "Failed to import contacts") };
   }
 }
 
@@ -218,7 +219,7 @@ export async function importItems(rows: ItemRow[]): Promise<{ created?: number; 
     return { created, skipped };
   });
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to import items" };
+    return { error: errMsg(err, "Failed to import items") };
   }
 }
 
@@ -299,6 +300,6 @@ export async function importInvoices(rows: InvoiceRow[]): Promise<{ created?: nu
     return { created, skipped };
   });
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to import invoices" };
+    return { error: errMsg(err, "Failed to import invoices") };
   }
 }

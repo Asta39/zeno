@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
@@ -82,7 +83,7 @@ export function ItemsTable({
         setBulkGroupId("");
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Bulk update failed");
+        setError(errMsg(e, "Bulk update failed"));
       }
     });
   }

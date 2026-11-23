@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -46,7 +47,7 @@ export function ApprovalRequestClient({
         setSuccess(decision === "approved" ? "Approved and posted." : "Document rejected successfully.");
         router.refresh();
       } catch (e) {
-        setError(isStaleServerActionError(e) ? STALE_ACTION_MESSAGE : e instanceof Error ? e.message : "Failed");
+        setError(isStaleServerActionError(e) ? STALE_ACTION_MESSAGE : errMsg(e, "Failed"));
       }
     });
   }
@@ -64,7 +65,7 @@ export function ApprovalRequestClient({
         setShowPayConfirm(false);
         router.refresh();
       } catch (e) {
-        setError(isStaleServerActionError(e) ? STALE_ACTION_MESSAGE : e instanceof Error ? e.message : "Failed");
+        setError(isStaleServerActionError(e) ? STALE_ACTION_MESSAGE : errMsg(e, "Failed"));
       }
     });
   }

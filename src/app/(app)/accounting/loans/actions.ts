@@ -1,4 +1,5 @@
 "use server";
+import { errMsg } from "@/lib/err-msg";
 
 import { revalidatePath } from "next/cache";
 import { getAccess } from "@/lib/access";
@@ -77,7 +78,7 @@ export async function createExternalLoanAction(input: {
     revalidatePath("/banking");
     return { id };
   } catch (e) {
-    return { error: e instanceof Error ? e.message : "Could not record the loan" };
+    return { error: errMsg(e, "Could not record the loan") };
   }
 }
 
@@ -112,7 +113,7 @@ export async function recordExternalLoanRepaymentAction(input: {
       detail: `Loan repayment of ${fmtKES(input.amountCents)} on ${input.date}`,
     });
   } catch (e) {
-    return { error: e instanceof Error ? e.message : "Could not record the repayment" };
+    return { error: errMsg(e, "Could not record the repayment") };
   }
   revalidatePath("/accounting/loans");
   revalidatePath(`/accounting/loans/${input.loanId}`);
@@ -149,7 +150,7 @@ export async function setupExternalLoanInterestAction(input: {
       detail: `Added ${fmtKES(input.interestTotalCents)} interest over ${input.termMonths} months`,
     });
   } catch (e) {
-    return { error: e instanceof Error ? e.message : "Could not add the interest" };
+    return { error: errMsg(e, "Could not add the interest") };
   }
   revalidatePath("/accounting/loans");
   revalidatePath(`/accounting/loans/${input.loanId}`);

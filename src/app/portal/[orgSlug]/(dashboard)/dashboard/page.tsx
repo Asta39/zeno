@@ -1,6 +1,6 @@
 import { getClientSession } from "@/lib/client-portal/auth";
 import { db, documents } from "@/db";
-import { eq, and, desc, inArray } from "drizzle-orm";
+import { eq, and, desc, asc, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -40,8 +40,28 @@ export default async function ClientPortalDashboard({ params }: { params: Promis
     .orderBy(desc(documents.date), desc(documents.id))
     .limit(5);
 
-  const unpaidInvoices = recentDocs.filter(d => d.type === "invoice" && ["open", "partial"].includes(d.status));
-  const activeQuotes = recentDocs.filter(d => d.type === "quote" && d.status === "open");
+  // Counts and the balance come from ALL of the client's documents — not the
+  // 5 recent ones above, which silently dropped older unpaid invoices from
+  // the Outstanding Balance.
+  const [unpaidInvoices, activeQuotes] = await Promise.all([
+    db.select()
+      .from(documents)
+      .where(and(
+        eq(documents.orgId, session.orgId),
+        eq(documents.contactId, session.contactId),
+        eq(documents.type, "invoice"),
+        inArray(documents.status, ["open", "partial"]),
+      ))
+      .orderBy(asc(documents.dueDate), asc(documents.id)),
+    db.select({ id: documents.id })
+      .from(documents)
+      .where(and(
+        eq(documents.orgId, session.orgId),
+        eq(documents.contactId, session.contactId),
+        eq(documents.type, "quote"),
+        eq(documents.status, "open"),
+      )),
+  ]);
 
   const totalOutstandingCents = unpaidInvoices.reduce((s, d) => s + (d.totalCents - d.paidCents), 0);
 

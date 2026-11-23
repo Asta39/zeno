@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition, useRef } from "react";
 
@@ -198,7 +199,7 @@ export function OrgProfileForm({ initial, gatewayOptions = [] }: { initial: OrgD
         setSaved(true);
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong.");
+        setError(errMsg(err, "Something went wrong."));
       }
     });
   }

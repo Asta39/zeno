@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -18,7 +19,7 @@ export function WriteOffButton({ invoiceId, balanceLabel }: { invoiceId: number;
         await writeOffInvoice(invoiceId);
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Write-off failed");
+        setError(errMsg(e, "Write-off failed"));
       }
     });
   }

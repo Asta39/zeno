@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -73,7 +74,7 @@ export function MpesaImport({ banks }: { banks: { id: number; label: string }[] 
         setTxns(null); setFileB64(null); setFileName("");
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Import failed");
+        setError(errMsg(err, "Import failed"));
       }
     });
   }

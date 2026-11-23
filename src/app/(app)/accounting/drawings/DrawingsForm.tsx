@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -24,7 +25,7 @@ export function DrawingsForm({ banks }: { banks: { id: number; name: string; kin
         await recordDrawings(bankId, amt, memo);
         router.push("/accountant");
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to record drawings.");
+        setError(errMsg(e, "Failed to record drawings."));
       }
     });
   }

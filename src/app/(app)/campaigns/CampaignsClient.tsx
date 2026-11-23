@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -52,7 +53,7 @@ export function CampaignsClient({ groups, campaigns }: { groups: Group[]; campai
         setMessage("");
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not create campaign");
+        setError(errMsg(err, "Could not create campaign"));
       }
     });
   }
@@ -65,7 +66,7 @@ export function CampaignsClient({ groups, campaigns }: { groups: Group[]; campai
         await sendCampaignAction(id);
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not send campaign");
+        setError(errMsg(err, "Could not send campaign"));
       } finally {
         setSendingId(null);
       }

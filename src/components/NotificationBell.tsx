@@ -5,6 +5,7 @@ import { getNotifications, markNotificationRead, markAllNotificationsRead } from
 import { useRouter } from "next/navigation";
 import { useRealtimeTable } from "@/lib/realtime/useRealtimeTable";
 import { Tooltip } from "./Tooltip";
+import { reportIfStale } from "@/lib/stale-action";
 
 type NotificationRow = {
   id: number;
@@ -29,7 +30,10 @@ export function NotificationBell({ orgId, memberId, variant = "fixed" }: { orgId
       const data = await getNotifications(memberId);
       if (Array.isArray(data)) setNotifications(data);
     } catch (err) {
-      // Silently catch errors on page transition / reload
+      // Silently catch errors on page transition / reload — but a stale
+      // build is worth surfacing: this poll runs on every page, so it is the
+      // first thing to notice a deploy happened under an open tab.
+      reportIfStale(err);
     }
   }, [memberId]);
 

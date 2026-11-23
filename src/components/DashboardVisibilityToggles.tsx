@@ -1,4 +1,5 @@
 "use client";
+import { errMsg } from "@/lib/err-msg";
 
 import { useState, useTransition } from "react";
 import { setDashboardVisibilityAction } from "@/lib/actions";
@@ -50,7 +51,7 @@ export function DashboardVisibilityToggles({
       try {
         await setDashboardVisibilityAction(next);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not save");
+        setError(errMsg(e, "Could not save"));
         if (next.showCollectedThisYearCard !== undefined) setCollected(!next.showCollectedThisYearCard);
         if (next.showInvoiceCollectionTotals !== undefined) setTotals(!next.showInvoiceCollectionTotals);
       }
